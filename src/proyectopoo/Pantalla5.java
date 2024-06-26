@@ -34,7 +34,7 @@ public class Pantalla5 extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         BtnAgregar = new javax.swing.JButton();
         BtnTiquet = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnInicio = new javax.swing.JButton();
         txtTamaño = new javax.swing.JTextField();
         txtProducto = new javax.swing.JTextField();
         txtCliente = new javax.swing.JTextField();
@@ -54,7 +54,6 @@ public class Pantalla5 extends javax.swing.JFrame {
         jTextField2 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(930, 630));
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 255));
 
@@ -89,11 +88,11 @@ public class Pantalla5 extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setFont(new java.awt.Font("Segoe UI Semibold", 3, 18)); // NOI18N
-        jButton3.setText("INICIO");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnInicio.setFont(new java.awt.Font("Segoe UI Semibold", 3, 18)); // NOI18N
+        btnInicio.setText("INICIO");
+        btnInicio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnInicioActionPerformed(evt);
             }
         });
 
@@ -269,7 +268,7 @@ public class Pantalla5 extends javax.swing.JFrame {
                         .addGap(124, 124, 124))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(183, 183, 183))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -316,7 +315,7 @@ public class Pantalla5 extends javax.swing.JFrame {
                             .addComponent(BtnAgregar)
                             .addComponent(BtnTiquet))
                         .addGap(39, 39, 39)
-                        .addComponent(jButton3)
+                        .addComponent(btnInicio)
                         .addGap(63, 63, 63))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -401,9 +400,9 @@ public class Pantalla5 extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_BtnAgregarActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_btnInicioActionPerformed
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
         // TODO add your handling code here:
@@ -477,7 +476,7 @@ public class Pantalla5 extends javax.swing.JFrame {
     private javax.swing.JButton btn7;
     private javax.swing.JButton btn8;
     private javax.swing.JButton btn9;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton btnInicio;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
