@@ -43,6 +43,11 @@ public class Pantalla8 extends javax.swing.JFrame {
 
         btnInicio.setFont(new java.awt.Font("Segoe UI Semibold", 3, 18)); // NOI18N
         btnInicio.setText("Inicio");
+        btnInicio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInicioActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 3, 36)); // NOI18N
         jLabel1.setText("Corte");
@@ -130,6 +135,13 @@ public class Pantalla8 extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
+        // TODO add your handling code here:
+        Pantalla1 datos = new Pantalla1();
+        datos.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnInicioActionPerformed
 
     /**
      * @param args the command line arguments
