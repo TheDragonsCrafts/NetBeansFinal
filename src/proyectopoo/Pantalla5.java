@@ -354,6 +354,9 @@ public class Pantalla5 extends javax.swing.JFrame {
 
     private void BtnTiquetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnTiquetActionPerformed
         // TODO add your handling code here:
+        Pantalla6 datos = new Pantalla6();
+        datos.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_BtnTiquetActionPerformed
 
     private void btn5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn5ActionPerformed
@@ -402,6 +405,9 @@ public class Pantalla5 extends javax.swing.JFrame {
 
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
         // TODO add your handling code here:
+        Pantalla1 datos = new Pantalla1();
+        datos.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnInicioActionPerformed
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
