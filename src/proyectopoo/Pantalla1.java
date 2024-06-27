@@ -43,7 +43,7 @@ public class Pantalla1 extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel1.setText("ELECTRONICS");
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenesProductos/logo de la empresa.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/logoEmpresa.png"))); // NOI18N
         jLabel2.setText("Logo empresa");
 
         btnSalir.setText("Salir");
