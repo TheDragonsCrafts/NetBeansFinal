@@ -153,26 +153,43 @@ public class Pantalla1 extends javax.swing.JFrame {
 
     private void btnCorteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCorteActionPerformed
         // TODO add your handling code here:
+        Pantalla7 datos = new Pantalla7();
+        datos.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnCorteActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
         // TODO add your handling code here:
+        Pantalla2 datos = new Pantalla2();
+        datos.setVisible(true);
+        this.setVisible(false);
+       
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListaActionPerformed
         // TODO add your handling code here:
+        Pantalla3 datos = new Pantalla3();
+        datos.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnListaActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         // TODO add your handling code here:
+        Pantalla4 datos = new Pantalla4();
+        datos.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPedidoActionPerformed
         // TODO add your handling code here:
+        Pantalla5 datos = new Pantalla5();
+        datos.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnPedidoActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_btnSalirActionPerformed
 
     /**
