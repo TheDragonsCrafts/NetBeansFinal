@@ -39,7 +39,7 @@ public class Pantalla8 extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(0, 102, 102));
+        jPanel1.setBackground(new java.awt.Color(0, 153, 153));
 
         btnInicio.setFont(new java.awt.Font("Segoe UI Semibold", 3, 18)); // NOI18N
         btnInicio.setText("Inicio");
