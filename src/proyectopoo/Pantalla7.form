@@ -44,7 +44,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace pref="138" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="jLabel1" min="-2" pref="174" max="-2" attributes="0"/>
@@ -56,10 +56,12 @@
                       </Group>
                   </Group>
               </Group>
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="76" max="-2" attributes="0"/>
-                  <Component id="btnTotal" min="-2" pref="156" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace min="-2" pref="87" max="-2" attributes="0"/>
+                  <Component id="btnTotal1" min="-2" pref="156" max="-2" attributes="0"/>
+                  <EmptySpace pref="115" max="32767" attributes="0"/>
+                  <Component id="btnCargarCorte" min="-2" pref="156" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="162" max="-2" attributes="0"/>
                   <Component id="btnInicio" min="-2" pref="207" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="95" max="-2" attributes="0"/>
               </Group>
@@ -74,8 +76,9 @@
                   <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="btnTotal" alignment="3" min="-2" pref="70" max="-2" attributes="0"/>
+                      <Component id="btnCargarCorte" alignment="3" min="-2" pref="70" max="-2" attributes="0"/>
                       <Component id="btnInicio" alignment="3" min="-2" pref="70" max="-2" attributes="0"/>
+                      <Component id="btnTotal1" alignment="3" min="-2" pref="70" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="26" max="32767" attributes="0"/>
               </Group>
@@ -90,7 +93,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTable" name="TablaProductos">
+            <Component class="javax.swing.JTable" name="TablaCorte">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI Semibold" size="18" style="3"/>
@@ -116,15 +119,15 @@
             <Property name="text" type="java.lang.String" value="CORTE"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="btnTotal">
+        <Component class="javax.swing.JButton" name="btnCargarCorte">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI Semibold" size="18" style="3"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Total"/>
+            <Property name="text" type="java.lang.String" value="Cargar Corte"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTotalActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCargarCorteActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnInicio">
@@ -136,6 +139,17 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnInicioActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnTotal1">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI Semibold" size="18" style="3"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Total"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTotal1ActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
