@@ -100,7 +100,7 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="68" max="-2" attributes="0"/>
-                          <Component id="txtMostrarProductoAñadido" min="-2" pref="147" max="-2" attributes="0"/>
+                          <Component id="txtMostrarProductoAñadido" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace min="-2" pref="203" max="-2" attributes="0"/>
@@ -252,7 +252,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="14" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Nombre producto"/>
+            <Property name="text" type="java.lang.String" value="Nombre de tu producto"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtMostrarProductoA&#xf1;adidoActionPerformed"/>
@@ -260,7 +260,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="labelImagenProducto">
           <Properties>
-            <Property name="text" type="java.lang.String" value="imagen producto"/>
+            <Property name="text" type="java.lang.String" value="AQUI APARECER&#xc1; TU PRODUCTO"/>
           </Properties>
         </Component>
       </SubComponents>

@@ -121,14 +121,14 @@ public class Pantalla2 extends javax.swing.JFrame {
         jLabel7.setText("PRODUCTO");
 
         txtMostrarProductoAñadido.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtMostrarProductoAñadido.setText("Nombre producto");
+        txtMostrarProductoAñadido.setText("Nombre de tu producto");
         txtMostrarProductoAñadido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtMostrarProductoAñadidoActionPerformed(evt);
             }
         });
 
-        labelImagenProducto.setText("imagen producto");
+        labelImagenProducto.setText("AQUI APARECERÁ TU PRODUCTO");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -167,7 +167,7 @@ public class Pantalla2 extends javax.swing.JFrame {
                         .addComponent(labelImagenProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(68, 68, 68)
-                        .addComponent(txtMostrarProductoAñadido, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtMostrarProductoAñadido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(203, 203, 203))
         );
         jPanel1Layout.setVerticalGroup(
