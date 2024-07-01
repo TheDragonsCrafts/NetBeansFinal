@@ -4,6 +4,10 @@
  */
 package proyectopoo;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 /**
  *
  * @author LAB 314 PC xx
@@ -199,11 +203,32 @@ public class Pantalla2 extends javax.swing.JFrame {
 
     private void btnRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroActionPerformed
         // TODO add your handling code here:
-        txtProducto.setText("");
+       
+         String Producto,Tamaño,Piezas,Costo,URL;
+        int edad;
+         Producto=txtProducto.getText();
+        Piezas=txtPiezas.getText();
+        Tamaño=txtTamaño.getText();
+        Costo=txtCosto.getText();
+        URL=txtURL.getText();
+        
+        
+        try{
+            BufferedWriter escritor=new BufferedWriter(new FileWriter("C:\\Users\\Liliana\\Documents\\POO.txt",true));
+            escritor.write(Producto+" "+Tamaño+" "+Piezas+" "+Costo+" "+URL);
+            escritor.newLine();
+            escritor.close();
+            
+             txtProducto.setText("");
         txtPiezas.setText("");
         txtTamaño.setText("");
         txtCosto.setText("");
         txtURL.setText("");
+
+        }catch(IOException ex){
+            
+        }
+        
         
         
         
