@@ -13,7 +13,7 @@ ID Producto Tamaño Piezas Costo
 012 Cámaras_De_Seguridad 7cm 5 68.99
 013 Sistemas_De_Videovigilancia 25cm 43 469.63
 014 Televisores_Inteligentes 25cm 59 980.61
-015 Reproductores_De_Blu-ray/DVD 13cm 32 391.47
+015 Reproductores_de_BlurayDVD 13cm 32 391.47
 016 Consolas_De_Videojuegos 2cm 2 506.85
 017 Controladores_De_Videojuegos 39cm 66 704.23
 018 Auriculares_(Headphones) 40cm 42 886.45
