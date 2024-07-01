@@ -383,7 +383,7 @@ public class Pantalla5 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     
-   private void updateProductInfo() {
+      private void updateProductInfo() {
     String producto = txtProducto.getText().trim();
     if (!producto.isEmpty()) {
         String normalizedProducto = Normalizer.normalize(producto, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
@@ -396,9 +396,10 @@ public class Pantalla5 extends javax.swing.JFrame {
                 String normalizedFileProductName = Normalizer.normalize(fileProductName, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
                 if (normalizedFileProductName.toLowerCase().contains(normalizedProducto.toLowerCase())) {
                     txtTamaño.setText(tokenizer.nextToken());
+                    tokenizer.nextToken(); // Ignorar la cantidad de piezas
                     txtCosto.setText(tokenizer.nextToken());
 
-                    // Probar múltiples extensiones de imagen
+                    // Probar múltiples extensiones de imagen ramses si no no va a funcionar
                     String[] extensions = {".png", ".jpg", ".jpeg"};
                     boolean imageFound = false;
                     for (String ext : extensions) {
@@ -434,23 +435,8 @@ public class Pantalla5 extends javax.swing.JFrame {
 
 
 
+
     
-    private int getNextID(String filePath) {
-    int maxID = 0;
-    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            StringTokenizer tokenizer = new StringTokenizer(line);
-            int currentID = Integer.parseInt(tokenizer.nextToken());
-            if (currentID > maxID) {
-                maxID = currentID;
-            }
-        }
-    } catch (IOException | NumberFormatException ex) {
-        ex.printStackTrace();
-    }
-    return maxID + 1;
-}
 
     private void BtnTiquetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnTiquetActionPerformed
         // TODO add your handling code here:
@@ -516,26 +502,88 @@ public class Pantalla5 extends javax.swing.JFrame {
 
     private void BtnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAgregarActionPerformed
         // TODO add your handling code here:
-        String cliente = txtCliente.getText().trim();
+         // Obtener el nombre completo del producto
     String producto = txtProducto.getText().trim();
+    if (producto.isEmpty() || txtCliente.getText().trim().isEmpty() || txtPiezas.getText().trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Por favor, completa todos los campos antes de agregar.");
+        return;
+    }
+
+    String normalizedProducto = Normalizer.normalize(producto, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+    String nombreCompletoProducto = "";
+    try (BufferedReader reader = new BufferedReader(new FileReader("src/textos/POO.txt"))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            StringTokenizer tokenizer = new StringTokenizer(line);
+            tokenizer.nextToken(); // Ignorar el ID
+            String fileProductName = tokenizer.nextToken().replace("_", " ");
+            String normalizedFileProductName = Normalizer.normalize(fileProductName, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+            if (normalizedFileProductName.toLowerCase().contains(normalizedProducto.toLowerCase())) {
+                nombreCompletoProducto = fileProductName;
+                break;
+            }
+        }
+    } catch (IOException ex) {
+        ex.printStackTrace();
+        return;
+    }
+
+    // Obtener el tamaño y costo
     String tamaño = txtTamaño.getText().trim();
     String piezas = txtPiezas.getText().trim();
     String costo = txtCosto.getText().trim();
+    String cliente = txtCliente.getText().trim();
 
-    if (!cliente.isEmpty() && !producto.isEmpty() && !tamaño.isEmpty() && !piezas.isEmpty() && !costo.isEmpty()) {
-        String fileName = "src/textos/" + cliente + ".txt";
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
-            int nextID = getNextID(fileName);
-            writer.write(String.format("%03d %s %s %s %s", nextID, producto.replace(" ", "_"), tamaño, piezas, costo));
-            writer.newLine();
-            JOptionPane.showMessageDialog(this, "Producto agregado exitosamente.");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error al agregar el producto.");
-        }
-    } else {
-        JOptionPane.showMessageDialog(this, "Por favor complete todos los campos.");
+    if (nombreCompletoProducto.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "No se encontró el nombre completo del producto.");
+        return;
     }
+
+    // Crear o actualizar el archivo del cliente
+    try {
+        File clienteFile = new File("src/textos/" + cliente + ".txt");
+        boolean isNewFile = !clienteFile.exists();
+        BufferedWriter escritor = new BufferedWriter(new FileWriter(clienteFile, true));
+        if (isNewFile) {
+            escritor.write("ID Producto Tamaño Piezas Costo");
+            escritor.newLine();
+        }
+        int nextID = getNextID(clienteFile.getPath());
+        escritor.write(String.format("%03d %s %s %s %s", nextID, nombreCompletoProducto.replace(" ", "_"), tamaño, piezas, costo));
+        escritor.newLine();
+        escritor.close();
+        JOptionPane.showMessageDialog(this, "Producto agregado exitosamente.");
+    } catch (IOException ex) {
+        JOptionPane.showMessageDialog(this, "Error al agregar el producto.");
+        ex.printStackTrace();
+    }
+
+    // Limpiar campos de texto
+    txtProducto.setText("");
+    txtTamaño.setText("");
+    txtPiezas.setText("");
+    txtCosto.setText("");
+    labelProductosImagen.setIcon(null);
+}
+
+// Método para obtener el próximo ID disponible 
+private int getNextID(String filePath) {
+    int maxID = 0;
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        String line;
+        // Saltar la cabecera
+        reader.readLine();
+        while ((line = reader.readLine()) != null) {
+            StringTokenizer tokenizer = new StringTokenizer(line);
+            int currentID = Integer.parseInt(tokenizer.nextToken());
+            if (currentID > maxID) {
+                maxID = currentID;
+            }
+        }
+    } catch (IOException | NumberFormatException ex) {
+        ex.printStackTrace();
+    }
+    return maxID + 1;
         
     }//GEN-LAST:event_BtnAgregarActionPerformed
 
