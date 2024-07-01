@@ -4,17 +4,30 @@
  */
 package proyectopoo;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author IanDa
  */
 public class Pantalla7 extends javax.swing.JFrame {
+     DefaultTableModel TP = new DefaultTableModel();
 
     /**
      * Creates new form Pantalla7
      */
     public Pantalla7() {
         initComponents();
+        TP.addColumn("ID");
+        TP.addColumn(" Productos");
+        TP.addColumn("Tamaño");
+        TP.addColumn("Piezas");
+        TP.addColumn("Costo");
+        TablaProductos.setModel(TP);
     }
 
     /**
@@ -28,7 +41,7 @@ public class Pantalla7 extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        TablaCorte = new javax.swing.JTable();
+        TablaProductos = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         btnTotal = new javax.swing.JButton();
         btnInicio = new javax.swing.JButton();
@@ -37,8 +50,8 @@ public class Pantalla7 extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(0, 153, 153));
 
-        TablaCorte.setFont(new java.awt.Font("Segoe UI Semibold", 3, 18)); // NOI18N
-        TablaCorte.setModel(new javax.swing.table.DefaultTableModel(
+        TablaProductos.setFont(new java.awt.Font("Segoe UI Semibold", 3, 18)); // NOI18N
+        TablaProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -52,13 +65,18 @@ public class Pantalla7 extends javax.swing.JFrame {
                 "cliente", "articulos", "costo", "piezas", "total"
             }
         ));
-        jScrollPane1.setViewportView(TablaCorte);
+        jScrollPane1.setViewportView(TablaProductos);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI Semibold", 3, 36)); // NOI18N
         jLabel1.setText("CORTE");
 
         btnTotal.setFont(new java.awt.Font("Segoe UI Semibold", 3, 18)); // NOI18N
         btnTotal.setText("Total");
+        btnTotal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTotalActionPerformed(evt);
+            }
+        });
 
         btnInicio.setFont(new java.awt.Font("Segoe UI Semibold", 3, 18)); // NOI18N
         btnInicio.setText("Inicio");
@@ -123,34 +141,44 @@ public class Pantalla7 extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_btnInicioActionPerformed
 
+    private void btnTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTotalActionPerformed
+        // TODO add your handling code here:
+        String archivo = "C:\\Users\\301-PC2\\Desktop\\Cierre.txt";
+        File file = new File(archivo);
+        try{
+           BufferedReader lector = new BufferedReader(new FileReader(file));
+           Object[] linea = lector.lines().toArray();
+           for(int i=0;i<linea.length;i++){
+               String dato = linea[i].toString();
+               String texto[] = dato.split(" ");
+               TP.addRow(texto);
+           }
+            
+        }catch(IOException e){
+            
+        }
+        
+    }//GEN-LAST:event_btnTotalActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Pantalla7.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Pantalla7.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Pantalla7.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Pantalla7.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    private void cargarDatos() {
+    String archivo = "C:\\Users\\301-PC2\\Desktop\\alumnos.txt";
+    File file = new File(archivo);
+    try {
+        BufferedReader lector = new BufferedReader(new FileReader(file));
+        Object[] linea = lector.lines().toArray();
+        DefaultTableModel modelo = (DefaultTableModel) TablaProductos.getModel();
+        modelo.setRowCount(0); // Limpiar tabla antes de cargar datos
+        for (int i = 0; i < linea.length; i++) {
+            String dato = linea[i].toString();
+            String texto[] = dato.split(" ");
+            modelo.addRow(texto);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
+    } catch (IOException e) {
+        
+    }
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Pantalla7().setVisible(true);
@@ -159,7 +187,7 @@ public class Pantalla7 extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable TablaCorte;
+    private javax.swing.JTable TablaProductos;
     private javax.swing.JButton btnInicio;
     private javax.swing.JButton btnTotal;
     private javax.swing.JLabel jLabel1;
