@@ -206,7 +206,7 @@ public class Pantalla2 extends javax.swing.JFrame {
        
          String Producto,Tamaño,Piezas,Costo,URL;
         int edad;
-         Producto=txtProducto.getText();
+        Producto=txtProducto.getText();
         Piezas=txtPiezas.getText();
         Tamaño=txtTamaño.getText();
         Costo=txtCosto.getText();
