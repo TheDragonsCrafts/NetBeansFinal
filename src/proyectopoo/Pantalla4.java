@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.Normalizer;
+import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.event.ListSelectionEvent;
@@ -29,36 +31,37 @@ public class Pantalla4 extends javax.swing.JFrame {
         initComponents();
         // Añadir ListSelectionListener para mostrar la imagen del producto seleccionado
             taTablaPan5.getSelectionModel().addListSelectionListener(event -> {
-            if (!event.getValueIsAdjusting() && taTablaPan5.getSelectedRow() != -1) {
-            // Obtener el nombre del producto de la tabla
-            String nombreProducto = taTablaPan5.getValueAt(taTablaPan5.getSelectedRow(), 1).toString();
+    if (!event.getValueIsAdjusting() && taTablaPan5.getSelectedRow() != -1) {
+        // Obtener el nombre del producto de la tabla
+        String nombreProducto = quitarAcentos(taTablaPan5.getValueAt(taTablaPan5.getSelectedRow(), 1).toString()).toLowerCase();
         
-            // Formatear el nombre del producto para que coincida con el nombre del archivo (todo en minúsculas)
-            nombreProducto = nombreProducto.replace(" ", "_").toLowerCase();
+        // Formatear el nombre del producto para que coincida con el nombre del archivo (todo en minúsculas)
+        nombreProducto = nombreProducto.replace(" ", "_");
         
-            // Extensiones posibles
-            String[] extensiones = {".png", ".jpg", ".jpeg"};
+        // Extensiones posibles
+        String[] extensiones = {".png", ".jpg", ".jpeg"};
         
-            boolean imagenCargada = false;
-            for (String extension : extensiones) {
-                String imagePath = "src/imagenes/" + nombreProducto + extension;
-                try {
-                    BufferedImage img = ImageIO.read(new File(imagePath));
-                    if (img != null) {
-                        ImageIcon icon = new ImageIcon(img.getScaledInstance(labelImagenProductoSeleccionado.getWidth(), labelImagenProductoSeleccionado.getHeight(), Image.SCALE_SMOOTH));
-                        labelImagenProductoSeleccionado.setIcon(icon);
-                        imagenCargada = true;
-                        break; // Imagen encontrada y cargada, salir del bucle
-                    }
-                } catch (IOException e) {
-                // Continuar intentando con la siguiente extensión
+        boolean imagenCargada = false;
+        for (String extension : extensiones) {
+            String imagePath = "src/imagenes/" + nombreProducto + extension;
+            try {
+                BufferedImage img = ImageIO.read(new File(imagePath));
+                if (img != null) {
+                    ImageIcon icon = new ImageIcon(img.getScaledInstance(labelImagenProductoSeleccionado.getWidth(), labelImagenProductoSeleccionado.getHeight(), Image.SCALE_SMOOTH));
+                    labelImagenProductoSeleccionado.setIcon(icon);
+                    imagenCargada = true;
+                    break; // Imagen encontrada y cargada, salir del bucle (ramses)
                 }
-            }
-            if (!imagenCargada) {
-            labelImagenProductoSeleccionado.setIcon(null); // No se encontró ninguna imagen
+            } catch (IOException e) {
+                
             }
         }
-    });
+        if (!imagenCargada) {
+            labelImagenProductoSeleccionado.setIcon(null); // No se encontró ninguna imagen
+        }
+    }
+});
+
     }
 
     /**
@@ -247,7 +250,11 @@ public class Pantalla4 extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+  private String quitarAcentos(String texto) {
+    String textoNormalizado = Normalizer.normalize(texto, Normalizer.Form.NFD);
+    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+    return pattern.matcher(textoNormalizado).replaceAll("");
+}
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
         // TODO add your handling code here:
         // Limpiar los campos de texto
@@ -277,33 +284,36 @@ public class Pantalla4 extends javax.swing.JFrame {
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         // TODO add your handling code here:
-         String tamaño = txtTamaño.getText().trim();
-        String producto = txtProducto.getText().trim().toLowerCase().replace(" ", "_");
-        String piezas = txtPiezas.getText().trim();
-        String costo = txtCosto.getText().trim();
+         String producto = quitarAcentos(txtProducto.getText().trim().toLowerCase());
+    String tamaño = quitarAcentos(txtTamaño.getText().trim().toLowerCase());
+    String piezas = quitarAcentos(txtPiezas.getText().trim().toLowerCase());
+    String costo = quitarAcentos(txtCosto.getText().trim().toLowerCase());
 
+    try (BufferedReader reader = new BufferedReader(new FileReader("src/textos/POO.txt"))) {
+        String line;
         DefaultTableModel model = (DefaultTableModel) taTablaPan5.getModel();
-        model.setRowCount(0); // Limpiar la tabla antes de realizar la búsqueda
+        model.setRowCount(0); // Limpiar la tabla antes de la nueva búsqueda
 
-        try (BufferedReader reader = new BufferedReader(new FileReader("src/textos/POO.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.trim().isEmpty() || line.startsWith("ID")) {
-                    continue; // Saltar la línea del encabezado y cualquier línea vacía
-                }
-                String[] datos = line.split(" ");
-                String datosProducto = datos[1].toLowerCase();
-                String datosCosto = datos[4];
-                if ((tamaño.isEmpty() || datos[2].equals(tamaño)) &&
-                    (producto.isEmpty() || datosProducto.contains(producto)) &&
-                    (piezas.isEmpty() || datos[3].equals(piezas)) &&
-                    (costo.isEmpty() || datosCosto.contains(costo))) {
-                    model.addRow(datos);
-                }
+        while ((line = reader.readLine()) != null) {
+            String[] data = line.split(" ");
+            String prod = quitarAcentos(data[1].toLowerCase());
+            String tam = quitarAcentos(data[2].toLowerCase());
+            String piez = quitarAcentos(data[3].toLowerCase());
+            String cos = quitarAcentos(data[4].toLowerCase());
+
+            boolean match = true;
+            if (!producto.isEmpty() && !prod.contains(producto)) match = false;
+            if (!tamaño.isEmpty() && !tam.contains(tamaño)) match = false;
+            if (!piezas.isEmpty() && !piez.contains(piezas)) match = false;
+            if (!costo.isEmpty() && !cos.contains(costo)) match = false;
+
+            if (match) {
+                model.addRow(new Object[]{data[0], data[1], data[2], data[3], data[4]});
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     /**
