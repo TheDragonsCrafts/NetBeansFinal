@@ -4,17 +4,30 @@
  */
 package proyectopoo;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author LAB 314 PC xx
  */
 public class Pantalla3 extends javax.swing.JFrame {
+    DefaultTableModel TP = new DefaultTableModel();
 
     /**
      * Creates new form Pantalla3
      */
     public Pantalla3() {
         initComponents();
+        TP.addColumn("ID");
+        TP.addColumn(" Productos");
+        TP.addColumn("Tamaño");
+        TP.addColumn("Piezas");
+        TP.addColumn("Costo");
+        TablaProductos.setModel(TP);
     }
 
     /**
@@ -146,6 +159,21 @@ public class Pantalla3 extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        String archivo = "C:\\Users\\301-PC2\\Desktop\\POO.txt";
+        File file = new File(archivo);
+        try{
+           BufferedReader lector = new BufferedReader(new FileReader(file));
+           Object[] linea = lector.lines().toArray();
+           for(int i=0;i<linea.length;i++){
+               String dato = linea[i].toString();
+               String texto[] = dato.split(" ");
+               TP.addRow(texto);
+           }
+            
+        }catch(IOException e){
+            
+        }
+        
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -162,35 +190,26 @@ public class Pantalla3 extends javax.swing.JFrame {
         datos.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
-
+     
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Pantalla3.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Pantalla3.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Pantalla3.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Pantalla3.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+     private void cargarDatos() {
+    String archivo = "C:\\Users\\301-PC2\\Desktop\\alumnos.txt";
+    File file = new File(archivo);
+    try {
+        BufferedReader lector = new BufferedReader(new FileReader(file));
+        Object[] linea = lector.lines().toArray();
+        DefaultTableModel modelo = (DefaultTableModel) TablaProductos.getModel();
+        modelo.setRowCount(0); // Limpiar tabla antes de cargar datos
+        for (int i = 0; i < linea.length; i++) {
+            String dato = linea[i].toString();
+            String texto[] = dato.split(" ");
+            modelo.addRow(texto);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
+    } catch (IOException e) {
+        
+    }
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Pantalla3().setVisible(true);
