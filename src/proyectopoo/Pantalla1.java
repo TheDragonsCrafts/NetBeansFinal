@@ -53,6 +53,7 @@ public class Pantalla1 extends javax.swing.JFrame {
             }
         });
 
+        btnAgregar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnAgregar.setText("Agregar");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -60,6 +61,7 @@ public class Pantalla1 extends javax.swing.JFrame {
             }
         });
 
+        btnLista.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnLista.setText("Lista");
         btnLista.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -67,6 +69,7 @@ public class Pantalla1 extends javax.swing.JFrame {
             }
         });
 
+        btnBuscar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnBuscar.setText("Buscar");
         btnBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -74,6 +77,7 @@ public class Pantalla1 extends javax.swing.JFrame {
             }
         });
 
+        btnPedido.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnPedido.setText("Pedido");
         btnPedido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -81,6 +85,7 @@ public class Pantalla1 extends javax.swing.JFrame {
             }
         });
 
+        btnCorte.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnCorte.setText("Corte");
         btnCorte.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
