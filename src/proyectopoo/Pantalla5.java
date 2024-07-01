@@ -3,7 +3,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package proyectopoo;
-
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
+import java.text.Normalizer;
+import java.util.StringTokenizer;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 /**
  *
  * @author IanDa
@@ -15,6 +31,17 @@ public class Pantalla5 extends javax.swing.JFrame {
      */
     public Pantalla5() {
         initComponents();
+         txtProducto.getDocument().addDocumentListener(new DocumentListener() {
+        public void insertUpdate(DocumentEvent e) {
+            updateProductInfo();
+        }
+        public void removeUpdate(DocumentEvent e) {
+            updateProductInfo();
+        }
+        public void changedUpdate(DocumentEvent e) {
+            updateProductInfo();
+        }
+    });
     }
 
     /**
@@ -51,7 +78,8 @@ public class Pantalla5 extends javax.swing.JFrame {
         btn0 = new javax.swing.JButton();
         btn9 = new javax.swing.JButton();
         btn8 = new javax.swing.JButton();
-        jLabel7 = new javax.swing.JLabel();
+        labelProductosImagen = new javax.swing.JLabel();
+        BtnLimpiar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -199,7 +227,15 @@ public class Pantalla5 extends javax.swing.JFrame {
             }
         });
 
-        jLabel7.setText("jLabel7");
+        labelProductosImagen.setText("labelProductosImagen");
+
+        BtnLimpiar.setFont(new java.awt.Font("Segoe UI Semibold", 3, 18)); // NOI18N
+        BtnLimpiar.setText("LIMPIAR");
+        BtnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnLimpiarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -222,7 +258,7 @@ public class Pantalla5 extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtCosto, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addGap(0, 11, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -257,19 +293,17 @@ public class Pantalla5 extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(352, 352, 352))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(90, 90, 90)
-                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(46, 46, 46)
+                .addComponent(labelProductosImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(295, 295, 295)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(BtnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BtnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(251, 251, 251)
-                        .addComponent(BtnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(BtnTiquet, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(124, 124, 124))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(183, 183, 183))))
+                    .addComponent(BtnTiquet, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -295,22 +329,6 @@ public class Pantalla5 extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtPiezas, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(27, 27, 27)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtTamaño, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(41, 41, 41)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCosto, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(64, 64, 64)
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btn4, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btn5, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -326,9 +344,28 @@ public class Pantalla5 extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(BtnAgregar)
                             .addComponent(BtnTiquet))
-                        .addGap(39, 39, 39)
-                        .addComponent(btnInicio)))
-                .addContainerGap(56, Short.MAX_VALUE))
+                        .addGap(40, 40, 40)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnInicio)
+                            .addComponent(BtnLimpiar))
+                        .addContainerGap(131, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtPiezas, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(27, 27, 27)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtTamaño, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(41, 41, 41)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCosto, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                        .addComponent(labelProductosImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(59, 59, 59))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -345,6 +382,76 @@ public class Pantalla5 extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+   private void updateProductInfo() {
+    String producto = txtProducto.getText().trim();
+    if (!producto.isEmpty()) {
+        String normalizedProducto = Normalizer.normalize(producto, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/textos/POO.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                StringTokenizer tokenizer = new StringTokenizer(line);
+                tokenizer.nextToken(); // Ignorar el ID
+                String fileProductName = tokenizer.nextToken().replace("_", " ");
+                String normalizedFileProductName = Normalizer.normalize(fileProductName, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+                if (normalizedFileProductName.toLowerCase().contains(normalizedProducto.toLowerCase())) {
+                    txtTamaño.setText(tokenizer.nextToken());
+                    txtCosto.setText(tokenizer.nextToken());
+
+                    // Probar múltiples extensiones de imagen
+                    String[] extensions = {".png", ".jpg", ".jpeg"};
+                    boolean imageFound = false;
+                    for (String ext : extensions) {
+                        String imageName = Normalizer.normalize(fileProductName.replace(" ", "_"), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "") + ext;
+                        File imageFile = new File("src/imagenes/" + imageName);
+                        if (imageFile.exists()) {
+                            BufferedImage bufferedImage = ImageIO.read(imageFile);
+                            ImageIcon imageIcon = new ImageIcon(bufferedImage.getScaledInstance(200, 200, Image.SCALE_SMOOTH));
+                            labelProductosImagen.setIcon(imageIcon);
+                            System.out.println("Imagen encontrada y cargada: " + imageName);
+                            imageFound = true;
+                            break;
+                        } else {
+                            System.out.println("Imagen no encontrada: " + imageName);
+                        }
+                    }
+                    if (!imageFound) {
+                        labelProductosImagen.setIcon(null);
+                    }
+                    break;
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    } else {
+        txtTamaño.setText("");
+        txtCosto.setText("");
+        labelProductosImagen.setIcon(null);
+    }
+}
+
+
+
+
+    
+    private int getNextID(String filePath) {
+    int maxID = 0;
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            StringTokenizer tokenizer = new StringTokenizer(line);
+            int currentID = Integer.parseInt(tokenizer.nextToken());
+            if (currentID > maxID) {
+                maxID = currentID;
+            }
+        }
+    } catch (IOException | NumberFormatException ex) {
+        ex.printStackTrace();
+    }
+    return maxID + 1;
+}
+
     private void BtnTiquetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnTiquetActionPerformed
         // TODO add your handling code here:
         Pantalla6 datos = new Pantalla6();
@@ -352,72 +459,84 @@ public class Pantalla5 extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_BtnTiquetActionPerformed
 
+    private void appendToPiezas(String digit) {
+    String currentText = txtPiezas.getText();
+    txtPiezas.setText(currentText + digit);
+}
+    
     private void btn5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn5ActionPerformed
         // TODO add your handling code here:
-        txtPiezas.setText("5");
+        appendToPiezas("5");
     }//GEN-LAST:event_btn5ActionPerformed
 
     private void btn6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn6ActionPerformed
         // TODO add your handling code here:
-        txtPiezas.setText("6");
+        appendToPiezas("6");
     }//GEN-LAST:event_btn6ActionPerformed
 
     private void btn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn1ActionPerformed
         // TODO add your handling code here:
-        txtPiezas.setText("1");
+        appendToPiezas("1");
     }//GEN-LAST:event_btn1ActionPerformed
 
     private void btn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn2ActionPerformed
         // TODO add your handling code here:
-        txtPiezas.setText("2");
+        appendToPiezas("2");
     }//GEN-LAST:event_btn2ActionPerformed
 
     private void btn3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn3ActionPerformed
         // TODO add your handling code here:
-        txtPiezas.setText("3");
+        appendToPiezas("3");
     }//GEN-LAST:event_btn3ActionPerformed
 
     private void btn4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn4ActionPerformed
         // TODO add your handling code here:
-        txtPiezas.setText("4");
+        appendToPiezas("4");
     }//GEN-LAST:event_btn4ActionPerformed
 
     private void btn7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn7ActionPerformed
         // TODO add your handling code here:
-        txtPiezas.setText("7");
+        appendToPiezas("7");
     }//GEN-LAST:event_btn7ActionPerformed
 
     private void btn8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn8ActionPerformed
         // TODO add your handling code here:
-        txtPiezas.setText("8");
+        appendToPiezas("8");
     }//GEN-LAST:event_btn8ActionPerformed
 
     private void btn9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn9ActionPerformed
         // TODO add your handling code here:
-        txtPiezas.setText("9");
+        appendToPiezas("9");
     }//GEN-LAST:event_btn9ActionPerformed
 
     private void btn0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn0ActionPerformed
         // TODO add your handling code here:
-        txtPiezas.setText("0");
+        appendToPiezas("0");
     }//GEN-LAST:event_btn0ActionPerformed
 
     private void BtnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAgregarActionPerformed
         // TODO add your handling code here:
-        String Producto,Cliente,Tamaño,Costo;
-        int Piezas;
-        int C=Integer.parseInt(Costo);
-        Producto=txtProducto.getText();
-        Costo=txtCosto.getText();
-        Cliente=txtCliente.getText();
-        Tamaño=txtTamaño.getText();
+        String cliente = txtCliente.getText().trim();
+    String producto = txtProducto.getText().trim();
+    String tamaño = txtTamaño.getText().trim();
+    String piezas = txtPiezas.getText().trim();
+    String costo = txtCosto.getText().trim();
+
+    if (!cliente.isEmpty() && !producto.isEmpty() && !tamaño.isEmpty() && !piezas.isEmpty() && !costo.isEmpty()) {
+        String fileName = "src/textos/" + cliente + ".txt";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
+            int nextID = getNextID(fileName);
+            writer.write(String.format("%03d %s %s %s %s", nextID, producto.replace(" ", "_"), tamaño, piezas, costo));
+            writer.newLine();
+            JOptionPane.showMessageDialog(this, "Producto agregado exitosamente.");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al agregar el producto.");
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Por favor complete todos los campos.");
+    }
         
-        
-        Pantalla6 r=new Pantalla6();
-        Pantalla6.txtProductos.setText(txtProducto.getText()); 
-        Pantalla6.txtCosto.setText(txtCosto.getText());
-        r.setVisible(true);
-        this.setVisible(false);
     }//GEN-LAST:event_BtnAgregarActionPerformed
 
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
@@ -446,6 +565,18 @@ public class Pantalla5 extends javax.swing.JFrame {
     private void txtPiezasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPiezasActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtPiezasActionPerformed
+
+    private void BtnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLimpiarActionPerformed
+        // TODO add your handling code here:
+        
+        txtProducto.setText("");
+        txtTamaño.setText("");
+        txtPiezas.setText("");
+        txtCosto.setText("");
+        labelProductosImagen.setIcon(null);
+
+
+    }//GEN-LAST:event_BtnLimpiarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -484,6 +615,7 @@ public class Pantalla5 extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnAgregar;
+    private javax.swing.JButton BtnLimpiar;
     private javax.swing.JButton BtnTiquet;
     private javax.swing.JButton btn0;
     private javax.swing.JButton btn1;
@@ -502,8 +634,8 @@ public class Pantalla5 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel labelProductosImagen;
     private javax.swing.JTextField txtCliente;
     private javax.swing.JTextField txtCosto;
     private javax.swing.JTextField txtPiezas;
