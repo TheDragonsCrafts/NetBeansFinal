@@ -4,6 +4,12 @@
  */
 package proyectopoo;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author IanDa
@@ -36,6 +42,7 @@ public class Pantalla8 extends javax.swing.JFrame {
         txtVentas = new javax.swing.JTextField();
         txtArticulos = new javax.swing.JTextField();
         txtClientes = new javax.swing.JTextField();
+        btnTotalCorte = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -64,6 +71,14 @@ public class Pantalla8 extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 3, 18)); // NOI18N
         jLabel5.setText("Articulos");
 
+        btnTotalCorte.setFont(new java.awt.Font("Segoe UI Semibold", 3, 18)); // NOI18N
+        btnTotalCorte.setText("total del corte");
+        btnTotalCorte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTotalCorteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -87,13 +102,15 @@ public class Pantalla8 extends javax.swing.JFrame {
                         .addComponent(txtVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 348, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(401, Short.MAX_VALUE)
+                .addComponent(btnTotalCorte, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
                 .addComponent(btnInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(123, 123, 123))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(412, 412, 412)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(424, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -116,7 +133,9 @@ public class Pantalla8 extends javax.swing.JFrame {
                         .addComponent(jLabel4))
                     .addComponent(txtVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 121, Short.MAX_VALUE)
-                .addComponent(btnInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnTotalCorte, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(105, 105, 105))
         );
 
@@ -142,6 +161,53 @@ public class Pantalla8 extends javax.swing.JFrame {
         datos.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnInicioActionPerformed
+
+    private void btnTotalCorteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTotalCorteActionPerformed
+        // TODO add your handling code here:
+         File folder = new File("src/textos/");
+    File[] listOfFiles = folder.listFiles((dir, name) -> name.endsWith("Corte.txt"));
+    
+    StringBuilder clientes = new StringBuilder();
+    int totalArticulos = 0;
+    double totalVentas = 0.0;
+
+    if (listOfFiles != null) {
+        for (File file : listOfFiles) {
+            System.out.println("Cargando datos del archivo: " + file.getName());
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String line;
+                String cliente = file.getName().replace("Corte.txt", "");
+                clientes.append(cliente).append("\n");
+
+                // Leer y descartar la primera línea de encabezado
+                reader.readLine();
+                
+                while ((line = reader.readLine()) != null) {
+                    String[] datos = line.split(" ");
+                    if (datos.length == 5) {
+                        try {
+                            double costo = Double.parseDouble(datos[2]);
+                            totalArticulos++;
+                            totalVentas += costo;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Error al parsear los datos: " + line);
+                        }
+                    } else {
+                        System.out.println("Línea inválida: " + line);
+                    }
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error al leer los archivos de corte.");
+            }
+        }
+        txtClientes.setText(clientes.toString());
+        txtArticulos.setText(String.valueOf(totalArticulos));
+        txtVentas.setText(String.valueOf(totalVentas));
+    } else {
+        JOptionPane.showMessageDialog(this, "No se encontraron archivos de corte.");
+    }
+    }//GEN-LAST:event_btnTotalCorteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -180,6 +246,7 @@ public class Pantalla8 extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnInicio;
+    private javax.swing.JButton btnTotalCorte;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
