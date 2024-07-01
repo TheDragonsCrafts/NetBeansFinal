@@ -4,6 +4,18 @@
  */
 package proyectopoo;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author LAB 314 PC xx
@@ -15,6 +27,38 @@ public class Pantalla4 extends javax.swing.JFrame {
      */
     public Pantalla4() {
         initComponents();
+        // Añadir ListSelectionListener para mostrar la imagen del producto seleccionado
+            taTablaPan5.getSelectionModel().addListSelectionListener(event -> {
+            if (!event.getValueIsAdjusting() && taTablaPan5.getSelectedRow() != -1) {
+            // Obtener el nombre del producto de la tabla
+            String nombreProducto = taTablaPan5.getValueAt(taTablaPan5.getSelectedRow(), 1).toString();
+        
+            // Formatear el nombre del producto para que coincida con el nombre del archivo (todo en minúsculas)
+            nombreProducto = nombreProducto.replace(" ", "_").toLowerCase();
+        
+            // Extensiones posibles
+            String[] extensiones = {".png", ".jpg", ".jpeg"};
+        
+            boolean imagenCargada = false;
+            for (String extension : extensiones) {
+                String imagePath = "src/imagenes/" + nombreProducto + extension;
+                try {
+                    BufferedImage img = ImageIO.read(new File(imagePath));
+                    if (img != null) {
+                        ImageIcon icon = new ImageIcon(img.getScaledInstance(labelImagenProductoSeleccionado.getWidth(), labelImagenProductoSeleccionado.getHeight(), Image.SCALE_SMOOTH));
+                        labelImagenProductoSeleccionado.setIcon(icon);
+                        imagenCargada = true;
+                        break; // Imagen encontrada y cargada, salir del bucle
+                    }
+                } catch (IOException e) {
+                // Continuar intentando con la siguiente extensión
+                }
+            }
+            if (!imagenCargada) {
+            labelImagenProductoSeleccionado.setIcon(null); // No se encontró ninguna imagen
+            }
+        }
+    });
     }
 
     /**
@@ -71,7 +115,7 @@ public class Pantalla4 extends javax.swing.JFrame {
                 {null, null, null, null, null}
             },
             new String [] {
-                "ID", "PRODCUTO", "TAMAÑO", "PIEZAS", "COSTO"
+                "ID", "PRODUCTO", "TAMAÑO", "PIEZAS", "COSTO"
             }
         ));
         jScrollPane1.setViewportView(taTablaPan5);
@@ -112,18 +156,23 @@ public class Pantalla4 extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(56, 56, 56)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtPiezas, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(42, 42, 42)
-                            .addComponent(txtCosto, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtTamaño, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtTamaño, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtPiezas, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(42, 42, 42)
+                        .addComponent(txtCosto, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 532, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(39, 39, 39))
@@ -143,16 +192,6 @@ public class Pantalla4 extends javax.swing.JFrame {
                 .addGap(516, 516, 516)
                 .addComponent(jLabel2)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(51, 51, 51)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(739, Short.MAX_VALUE)))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(55, 55, 55)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(735, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,22 +199,6 @@ public class Pantalla4 extends javax.swing.JFrame {
                 .addGap(30, 30, 30)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtTamaño, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(26, 26, 26)
-                        .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtPiezas, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(22, 22, 22)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCosto, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(labelImagenProductoSeleccionado, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(16, 16, 16))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(28, 28, 28)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -186,17 +209,27 @@ public class Pantalla4 extends javax.swing.JFrame {
                                 .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(btnInicio, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(120, Short.MAX_VALUE))))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(127, 127, 127)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(462, Short.MAX_VALUE)))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(201, 201, 201)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(388, Short.MAX_VALUE)))
+                        .addContainerGap(120, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(50, 50, 50)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtTamaño, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtPiezas, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(22, 22, 22)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCosto, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(labelImagenProductoSeleccionado, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(16, 16, 16))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -217,10 +250,15 @@ public class Pantalla4 extends javax.swing.JFrame {
 
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
         // TODO add your handling code here:
+        // Limpiar los campos de texto
         txtPiezas.setText("");
         txtTamaño.setText("");
         txtCosto.setText("");
         txtProducto.setText("");
+
+        // Limpiar la tabla
+        DefaultTableModel model = (DefaultTableModel) taTablaPan5.getModel();
+        model.setRowCount(0);
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
@@ -239,6 +277,33 @@ public class Pantalla4 extends javax.swing.JFrame {
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         // TODO add your handling code here:
+         String tamaño = txtTamaño.getText().trim();
+        String producto = txtProducto.getText().trim().toLowerCase().replace(" ", "_");
+        String piezas = txtPiezas.getText().trim();
+        String costo = txtCosto.getText().trim();
+
+        DefaultTableModel model = (DefaultTableModel) taTablaPan5.getModel();
+        model.setRowCount(0); // Limpiar la tabla antes de realizar la búsqueda
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/textos/POO.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.trim().isEmpty() || line.startsWith("ID")) {
+                    continue; // Saltar la línea del encabezado y cualquier línea vacía
+                }
+                String[] datos = line.split(" ");
+                String datosProducto = datos[1].toLowerCase();
+                String datosCosto = datos[4];
+                if ((tamaño.isEmpty() || datos[2].equals(tamaño)) &&
+                    (producto.isEmpty() || datosProducto.contains(producto)) &&
+                    (piezas.isEmpty() || datos[3].equals(piezas)) &&
+                    (costo.isEmpty() || datosCosto.contains(costo))) {
+                    model.addRow(datos);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     /**
