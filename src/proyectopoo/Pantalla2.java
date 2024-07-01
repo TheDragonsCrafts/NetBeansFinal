@@ -127,6 +127,7 @@ public class Pantalla2 extends javax.swing.JFrame {
         jLabel7.setText("PRODUCTO");
 
         labelImagenProducto.setFont(new java.awt.Font("Segoe UI", 1, 11)); // NOI18N
+        labelImagenProducto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/textos/imagenes productos.png"))); // NOI18N
         labelImagenProducto.setText("AQUI APARECERÁ TU PRODUCTO");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
