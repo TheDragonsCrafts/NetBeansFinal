@@ -48,4 +48,4 @@ ID Producto Tamaño Piezas Costo
 047 Cámaras_Web 11cm 14 696.05
 048 Micrófonos_USB 24cm 86 476.74
 049 Impresoras_3D 36cm 49 979.64
-050 Escáneres_3D 12cm 50 160.39
+050 Escáneres_3D 12cm 50 160.39    
