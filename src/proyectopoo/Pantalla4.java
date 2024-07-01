@@ -266,7 +266,7 @@ public class Pantalla4 extends javax.swing.JFrame {
         txtCosto.setText("");
         txtProducto.setText("");
 
-        // Limpiar la tabla
+        
         DefaultTableModel model = (DefaultTableModel) taTablaPan5.getModel();
         model.setRowCount(0);
     }//GEN-LAST:event_btnLimpiarActionPerformed
