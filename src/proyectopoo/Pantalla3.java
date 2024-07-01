@@ -159,7 +159,7 @@ public class Pantalla3 extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        String archivo = "C:\\Users\\IanDa\\OneDrive\\Documents\\NetBeansProjects\\NetBeansFinal\\src\\proyectopoo\\POO.txt";
+        String archivo = "src/textos/POO.txt";
         File file = new File(archivo);
         try{
            BufferedReader lector = new BufferedReader(new FileReader(file));
