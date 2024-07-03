@@ -38,10 +38,12 @@ public class Pantalla1 extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 204));
+        jPanel1.setBackground(new java.awt.Color(0, 153, 153));
 
-        jLabel1.setText("Nombre de la empresa");
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel1.setText("ELECTRONCS");
 
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/logoEmpresa.png"))); // NOI18N
         jLabel2.setText("Logo empresa");
 
         btnSalir.setText("Salir");
@@ -51,6 +53,7 @@ public class Pantalla1 extends javax.swing.JFrame {
             }
         });
 
+        btnAgregar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnAgregar.setText("Agregar");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -58,6 +61,7 @@ public class Pantalla1 extends javax.swing.JFrame {
             }
         });
 
+        btnLista.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnLista.setText("Lista");
         btnLista.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -65,6 +69,7 @@ public class Pantalla1 extends javax.swing.JFrame {
             }
         });
 
+        btnBuscar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnBuscar.setText("Buscar");
         btnBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -72,6 +77,7 @@ public class Pantalla1 extends javax.swing.JFrame {
             }
         });
 
+        btnPedido.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnPedido.setText("Pedido");
         btnPedido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -79,6 +85,7 @@ public class Pantalla1 extends javax.swing.JFrame {
             }
         });
 
+        btnCorte.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnCorte.setText("Corte");
         btnCorte.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -100,13 +107,12 @@ public class Pantalla1 extends javax.swing.JFrame {
                     .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(143, 143, 143)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(196, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 478, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(85, 85, 85))))
+                        .addGap(204, 204, 204)
+                        .addComponent(jLabel1))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(141, 141, 141)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(247, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -117,10 +123,10 @@ public class Pantalla1 extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(56, 56, 56)
+                        .addGap(62, 62, 62)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(103, 103, 103)
                         .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -153,26 +159,43 @@ public class Pantalla1 extends javax.swing.JFrame {
 
     private void btnCorteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCorteActionPerformed
         // TODO add your handling code here:
+        Pantalla7 datos = new Pantalla7();
+        datos.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnCorteActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
         // TODO add your handling code here:
+        Pantalla2 datos = new Pantalla2();
+        datos.setVisible(true);
+        this.setVisible(false);
+       
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListaActionPerformed
         // TODO add your handling code here:
+        Pantalla3 datos = new Pantalla3();
+        datos.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnListaActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         // TODO add your handling code here:
+        Pantalla4 datos = new Pantalla4();
+        datos.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPedidoActionPerformed
         // TODO add your handling code here:
+        Pantalla5 datos = new Pantalla5();
+        datos.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btnPedidoActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_btnSalirActionPerformed
 
     /**
