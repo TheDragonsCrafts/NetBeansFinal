@@ -4,18 +4,25 @@
  */
 package proyectopoo;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+// Removed: java.io.BufferedReader, File, FileReader, IOException
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane; // Added
+import java.util.List; // Added
+
+// Add imports for project classes
+import proyectopoo.Order;
+import proyectopoo.OrderItem;
+import proyectopoo.OrderRepository;
+import proyectopoo.ProductRepository;
 
 /**
  *
  * @author IanDa
  */
 public class Pantalla7 extends javax.swing.JFrame {
-     DefaultTableModel Ta = new DefaultTableModel();
+    // DefaultTableModel Ta = new DefaultTableModel(); // Ta was unused, can be removed
+    private OrderRepository orderRepository;
+    private ProductRepository productRepository;
      
 
     /**
@@ -23,46 +30,43 @@ public class Pantalla7 extends javax.swing.JFrame {
      */
     public Pantalla7() {
         initComponents();
-        TablaCorte.setModel(new javax.swing.table.DefaultTableModel(
-        new Object [][] {},
-        new String [] {
-        "cliente", "articulos", "costo", "piezas", "total"
-    }
-));
-
+        productRepository = new ProductRepository();
+        orderRepository = new OrderRepository(productRepository);
         
+        // Existing model setup is fine, ensure it's using the class member if Ta was intended for TablaCorte
+        // For clarity, directly using TablaCorte.getModel() is fine, or ensure Ta is correctly assigned and used.
+        // The current setup in initComponents() creates a new DefaultTableModel for TablaCorte.
+        // If Ta was meant to be this model, it should be assigned:
+        // Ta = (DefaultTableModel) TablaCorte.getModel();
+        // And then use Ta.addColumn etc. if adding columns programmatically,
+        // but since columns are set in initComponents, this explicit model setup is okay.
+        // The prompt says: "The existing TablaCorte.setModel in the constructor correctly defines the columns"
+        // This seems to refer to the auto-generated initComponents, not manual setup in constructor body.
+        // So, we'll keep the initComponents() as is for column definition.
     }
-private void cargarDatosCorte() {
-    DefaultTableModel modelo = (DefaultTableModel) TablaCorte.getModel();
-    modelo.setRowCount(0); // Limpiar la tabla antes de cargar datos
 
-    File folder = new File("src/textos/");
-    File[] listOfFiles = folder.listFiles((dir, name) -> name.endsWith("Corte.txt"));
+    private void cargarDatosCorte() {
+        DefaultTableModel modelo = (DefaultTableModel) TablaCorte.getModel();
+        modelo.setRowCount(0); // Limpiar la tabla antes de cargar datos
 
-    if (listOfFiles != null) {
-        for (File file : listOfFiles) {
-            System.out.println("Cargando datos del archivo: " + file.getName());
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                String line;
-                // Leer y descartar la primera línea de encabezado
-                line = reader.readLine();
-                while ((line = reader.readLine()) != null) {
-                    String[] datos = line.split(" ");
-                    if (datos.length == 5) {
-                        modelo.addRow(datos);
-                        System.out.println("Datos agregados: " + String.join(", ", datos));
-                    } else {
-                        System.out.println("Línea inválida: " + line);
-                    }
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
+        List<Order> allOrders = orderRepository.getAllOrders();
+
+        if (allOrders.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No orders found to display in report.");
+            return;
+        }
+
+        for (Order order : allOrders) {
+            for (OrderItem item : order.getItems()) {
+                String clientName = order.getClientName();
+                String articleName = item.getProduct().getName();
+                double itemCost = item.getPriceAtTimeOfOrder(); // Cost per unit
+                int pieces = item.getQuantity();
+                double itemTotal = item.getTotalPrice(); // Total for this item line
+                modelo.addRow(new Object[]{clientName, articleName, String.format("%.2f", itemCost), pieces, String.format("%.2f", itemTotal)});
             }
         }
-    } else {
-        System.out.println("No se encontraron archivos de corte.");
     }
-}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -198,31 +202,8 @@ private void cargarDatosCorte() {
         this.setVisible(false);
     }//GEN-LAST:event_btnTotal1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    private void cargarDatos() {
-    String archivo = "C:\\Users\\301-PC2\\Desktop\\alumnos.txt";
-    File file = new File(archivo);
-    try {
-        BufferedReader lector = new BufferedReader(new FileReader(file));
-        Object[] linea = lector.lines().toArray();
-        DefaultTableModel modelo = (DefaultTableModel) TablaCorte.getModel();
-        modelo.setRowCount(0); // Limpiar tabla antes de cargar datos
-        for (int i = 0; i < linea.length; i++) {
-            String dato = linea[i].toString();
-            String texto[] = dato.split(" ");
-            modelo.addRow(texto);
-        }
-    } catch (IOException e) {
-        
-    }
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Pantalla7().setVisible(true);
-            }
-        });
-    }
+    // Removed the unused cargarDatos() method
+    // Removed main() method
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable TablaCorte;

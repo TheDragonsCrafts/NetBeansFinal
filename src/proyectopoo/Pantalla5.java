@@ -3,45 +3,69 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package proyectopoo;
-import java.awt.Graphics2D;
-import java.awt.Image;
+
+// Keep:
+import java.awt.Image; // For image scaling
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URL;
-import java.text.Normalizer;
-import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.text.Normalizer; // Keep for normalization
+import java.util.regex.Pattern; // Keep if still used with Normalizer
+
+// Add:
+import proyectopoo.Product;
+import proyectopoo.OrderItem;
+import proyectopoo.Order;
+import proyectopoo.ProductRepository;
+import proyectopoo.OrderRepository;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+
+// Remove:
+// import java.awt.Graphics2D; // No longer directly used
+// import java.io.BufferedReader;
+// import java.io.BufferedWriter;
+// import java.io.FileReader;
+// import java.io.FileWriter;
+// import java.io.IOException; // Specific IOExceptions are caught, general one less needed
+// import java.net.URL; // No longer used
+// import java.util.StringTokenizer; // No longer used
+
 /**
  *
  * @author IanDa
  */
 public class Pantalla5 extends javax.swing.JFrame {
 
+    private ProductRepository productRepository;
+    private OrderRepository orderRepository;
+    private Product currentSelectedProduct = null;
+
     /**
      * Creates new form Pantalla5
      */
     public Pantalla5() {
         initComponents();
-         txtProducto.getDocument().addDocumentListener(new DocumentListener() {
-        public void insertUpdate(DocumentEvent e) {
-            updateProductInfo();
-        }
-        public void removeUpdate(DocumentEvent e) {
-            updateProductInfo();
-        }
-        public void changedUpdate(DocumentEvent e) {
-            updateProductInfo();
-        }
-    });
+        productRepository = new ProductRepository();
+        orderRepository = new OrderRepository(productRepository);
+
+        txtProducto.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+                updateProductInfo();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                updateProductInfo();
+            }
+            public void changedUpdate(DocumentEvent e) {
+                updateProductInfo();
+            }
+        });
     }
 
     /**
@@ -382,209 +406,163 @@ public class Pantalla5 extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
-      private void updateProductInfo() {
-    String producto = txtProducto.getText().trim();
-    if (!producto.isEmpty()) {
-        String normalizedProducto = Normalizer.normalize(producto, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
-        try (BufferedReader reader = new BufferedReader(new FileReader("src/textos/POO.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                StringTokenizer tokenizer = new StringTokenizer(line);
-                tokenizer.nextToken(); // Ignorar el ID
-                String fileProductName = tokenizer.nextToken().replace("_", " ");
-                String normalizedFileProductName = Normalizer.normalize(fileProductName, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
-                if (normalizedFileProductName.toLowerCase().contains(normalizedProducto.toLowerCase())) {
-                    txtTamaño.setText(tokenizer.nextToken());
-                    tokenizer.nextToken(); // Ignorar la cantidad de piezas
-                    txtCosto.setText(tokenizer.nextToken());
-
-                    // Probar múltiples extensiones de imagen ramses si no no va a funcionar
-                    String[] extensions = {".png", ".jpg", ".jpeg"};
-                    boolean imageFound = false;
-                    for (String ext : extensions) {
-                        String imageName = Normalizer.normalize(fileProductName.replace(" ", "_"), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "") + ext;
-                        File imageFile = new File("src/imagenes/" + imageName);
-                        if (imageFile.exists()) {
-                            BufferedImage bufferedImage = ImageIO.read(imageFile);
-                            ImageIcon imageIcon = new ImageIcon(bufferedImage.getScaledInstance(200, 200, Image.SCALE_SMOOTH));
-                            labelProductosImagen.setIcon(imageIcon);
-                            System.out.println("Imagen encontrada y cargada: " + imageName);
-                            imageFound = true;
-                            break;
-                        } else {
-                            System.out.println("Imagen no encontrada: " + imageName);
-                        }
-                    }
-                    if (!imageFound) {
-                        labelProductosImagen.setIcon(null);
-                    }
-                    break;
-                }
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    } else {
-        txtTamaño.setText("");
-        txtCosto.setText("");
-        labelProductosImagen.setIcon(null);
+    private static String normalizeString(String input) {
+        if (input == null) return "";
+        // NFD: Normalization Form Decomposed. Decomposes characters into base characters and combining diacritical marks.
+        // \\p{InCombiningDiacriticalMarks}+: Matches one or more combining diacritical marks (accents, etc.).
+        return Normalizer.normalize(input, Normalizer.Form.NFD)
+                         .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                         .toLowerCase();
     }
-}
 
+    private void updateProductInfo() {
+        String productNameQuery = txtProducto.getText().trim();
 
+        if (productNameQuery.isEmpty()) {
+            txtTamaño.setText("");
+            txtCosto.setText("");
+            labelProductosImagen.setIcon(null);
+            labelProductosImagen.setText("labelProductosImagen"); // Placeholder
+            currentSelectedProduct = null;
+            return;
+        }
 
+        String normalizedQuery = normalizeString(productNameQuery);
+        List<Product> allProducts = productRepository.getAllProducts();
+        Product foundProduct = null;
 
+        for (Product product : allProducts) {
+            String normalizedProductName = normalizeString(product.getName());
+            if (normalizedProductName.contains(normalizedQuery)) {
+                foundProduct = product;
+                break; // Stop after first match
+            }
+        }
 
-    
+        if (foundProduct != null) {
+            currentSelectedProduct = foundProduct;
+            txtTamaño.setText(foundProduct.getSize());
+            txtCosto.setText(String.valueOf(foundProduct.getCost()));
+
+            String imagePath = foundProduct.getImagePath();
+            ImageIcon icon = ImageDownloader.loadImageIcon(imagePath, labelProductosImagen.getWidth(), labelProductosImagen.getHeight());
+            labelProductosImagen.setIcon(icon);
+
+            if (icon == null && imagePath != null && !imagePath.isEmpty()) {
+                labelProductosImagen.setText("Preview N/A");
+            } else if (icon == null) {
+                labelProductosImagen.setText("labelProductosImagen"); // Placeholder
+            } else {
+                labelProductosImagen.setText(""); // Image loaded, clear text
+            }
+        } else {
+            txtTamaño.setText("");
+            txtCosto.setText("");
+            labelProductosImagen.setIcon(null);
+            labelProductosImagen.setText("labelProductosImagen"); // Placeholder
+            currentSelectedProduct = null;
+        }
+    }
 
     private void BtnTiquetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnTiquetActionPerformed
         // TODO add your handling code here:
+        // This navigation might need to be updated if Pantalla6 expects data or different initialization
         Pantalla6 datos = new Pantalla6();
         datos.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_BtnTiquetActionPerformed
 
     private void appendToPiezas(String digit) {
-    String currentText = txtPiezas.getText();
-    txtPiezas.setText(currentText + digit);
-}
+        String currentText = txtPiezas.getText();
+        txtPiezas.setText(currentText + digit);
+    }
     
     private void btn5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn5ActionPerformed
-        // TODO add your handling code here:
         appendToPiezas("5");
     }//GEN-LAST:event_btn5ActionPerformed
 
     private void btn6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn6ActionPerformed
-        // TODO add your handling code here:
         appendToPiezas("6");
     }//GEN-LAST:event_btn6ActionPerformed
 
     private void btn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn1ActionPerformed
-        // TODO add your handling code here:
         appendToPiezas("1");
     }//GEN-LAST:event_btn1ActionPerformed
 
     private void btn2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn2ActionPerformed
-        // TODO add your handling code here:
         appendToPiezas("2");
     }//GEN-LAST:event_btn2ActionPerformed
 
     private void btn3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn3ActionPerformed
-        // TODO add your handling code here:
         appendToPiezas("3");
     }//GEN-LAST:event_btn3ActionPerformed
 
     private void btn4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn4ActionPerformed
-        // TODO add your handling code here:
         appendToPiezas("4");
     }//GEN-LAST:event_btn4ActionPerformed
 
     private void btn7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn7ActionPerformed
-        // TODO add your handling code here:
         appendToPiezas("7");
     }//GEN-LAST:event_btn7ActionPerformed
 
     private void btn8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn8ActionPerformed
-        // TODO add your handling code here:
         appendToPiezas("8");
     }//GEN-LAST:event_btn8ActionPerformed
 
     private void btn9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn9ActionPerformed
-        // TODO add your handling code here:
         appendToPiezas("9");
     }//GEN-LAST:event_btn9ActionPerformed
 
     private void btn0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn0ActionPerformed
-        // TODO add your handling code here:
         appendToPiezas("0");
     }//GEN-LAST:event_btn0ActionPerformed
 
     private void BtnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAgregarActionPerformed
-        // TODO add your handling code here:
-         // Obtener el nombre completo del producto
-    String producto = txtProducto.getText().trim();
-    if (producto.isEmpty() || txtCliente.getText().trim().isEmpty() || txtPiezas.getText().trim().isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Por favor, completa todos los campos antes de agregar.");
-        return;
-    }
+        String cliente = txtCliente.getText().trim();
+        String piezasStr = txtPiezas.getText().trim();
 
-    String normalizedProducto = Normalizer.normalize(producto, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
-    String nombreCompletoProducto = "";
-    try (BufferedReader reader = new BufferedReader(new FileReader("src/textos/POO.txt"))) {
-        String line;
-        while ((line = reader.readLine()) != null) {
-            StringTokenizer tokenizer = new StringTokenizer(line);
-            tokenizer.nextToken(); // Ignorar el ID
-            String fileProductName = tokenizer.nextToken().replace("_", " ");
-            String normalizedFileProductName = Normalizer.normalize(fileProductName, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
-            if (normalizedFileProductName.toLowerCase().contains(normalizedProducto.toLowerCase())) {
-                nombreCompletoProducto = fileProductName;
-                break;
+        // Validation
+        if (currentSelectedProduct == null) {
+            JOptionPane.showMessageDialog(this, "Please select a valid product.", "Product Not Selected", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (cliente.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Client name cannot be empty.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int piezas;
+        try {
+            piezas = Integer.parseInt(piezasStr);
+            if (piezas <= 0) {
+                JOptionPane.showMessageDialog(this, "Pieces must be greater than 0.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid number for pieces.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
-    } catch (IOException ex) {
-        ex.printStackTrace();
-        return;
-    }
 
-    // Obtener el tamaño y costo
-    String tamaño = txtTamaño.getText().trim();
-    String piezas = txtPiezas.getText().trim();
-    String costo = txtCosto.getText().trim();
-    String cliente = txtCliente.getText().trim();
+        // Order Creation
+        OrderItem item = new OrderItem(currentSelectedProduct, piezas, currentSelectedProduct.getCost());
+        List<OrderItem> items = new ArrayList<>();
+        items.add(item);
 
-    if (nombreCompletoProducto.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "No se encontró el nombre completo del producto.");
-        return;
-    }
+        int generatedOrderId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+        if (generatedOrderId < 0) generatedOrderId *= -1; // Ensure positive ID
 
-    // Crear o actualizar el archivo del cliente
-    try {
-        File clienteFile = new File("src/textos/" + cliente + ".txt");
-        boolean isNewFile = !clienteFile.exists();
-        BufferedWriter escritor = new BufferedWriter(new FileWriter(clienteFile, true));
-        if (isNewFile) {
-            escritor.write("ID Producto Tamaño Piezas Costo");
-            escritor.newLine();
+        Order order = new Order(generatedOrderId, cliente, items, new Date());
+
+        // Save Order
+        boolean success = orderRepository.addOrder(order);
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Producto agregado exitosamente.");
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al agregar el producto.", "Order Error", JOptionPane.ERROR_MESSAGE);
         }
-        int nextID = getNextID(clienteFile.getPath());
-        escritor.write(String.format("%03d %s %s %s %s", nextID, nombreCompletoProducto.replace(" ", "_"), tamaño, piezas, costo));
-        escritor.newLine();
-        escritor.close();
-        JOptionPane.showMessageDialog(this, "Producto agregado exitosamente.");
-    } catch (IOException ex) {
-        JOptionPane.showMessageDialog(this, "Error al agregar el producto.");
-        ex.printStackTrace();
-    }
 
-    // Limpiar campos de texto
-    txtProducto.setText("");
-    txtTamaño.setText("");
-    txtPiezas.setText("");
-    txtCosto.setText("");
-    labelProductosImagen.setIcon(null);
-}
-
-// Método para obtener el próximo ID disponible 
-private int getNextID(String filePath) {
-    int maxID = 0;
-    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-        String line;
-        // Saltar la cabecera
-        reader.readLine();
-        while ((line = reader.readLine()) != null) {
-            StringTokenizer tokenizer = new StringTokenizer(line);
-            int currentID = Integer.parseInt(tokenizer.nextToken());
-            if (currentID > maxID) {
-                maxID = currentID;
-            }
-        }
-    } catch (IOException | NumberFormatException ex) {
-        ex.printStackTrace();
-    }
-    return maxID + 1;
-        
+        // Cleanup
+        BtnLimpiarActionPerformed(null); // Call existing limpiar logic
     }//GEN-LAST:event_BtnAgregarActionPerformed
 
     private void btnInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioActionPerformed
@@ -615,51 +593,18 @@ private int getNextID(String filePath) {
     }//GEN-LAST:event_txtPiezasActionPerformed
 
     private void BtnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLimpiarActionPerformed
-        // TODO add your handling code here:
-        
-        txtProducto.setText("");
-        txtTamaño.setText("");
+        txtCliente.setText("");
+        txtProducto.setText(""); // This will trigger updateProductInfo to clear other product fields and image
         txtPiezas.setText("");
-        txtCosto.setText("");
-        labelProductosImagen.setIcon(null);
-
-
+        // currentSelectedProduct is set to null by updateProductInfo when txtProducto is cleared
+        currentSelectedProduct = null; // Explicitly ensure it's null
+        labelProductosImagen.setIcon(null); // Explicitly clear icon
+        labelProductosImagen.setText("labelProductosImagen"); // Reset placeholder text
+        // txtTamaño.setText(""); // Also handled by updateProductInfo
+        // txtCosto.setText(""); // Also handled by updateProductInfo
     }//GEN-LAST:event_BtnLimpiarActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Pantalla5.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Pantalla5.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Pantalla5.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Pantalla5.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Pantalla5().setVisible(true);
-            }
-        });
-    }
+    // Removed main() method
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnAgregar;

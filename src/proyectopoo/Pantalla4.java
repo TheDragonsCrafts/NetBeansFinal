@@ -6,17 +6,24 @@ package proyectopoo;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+// Removed: import java.io.BufferedReader;
+// Removed: import java.io.FileReader;
+// Removed: import java.io.IOException;
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+// Removed: import javax.swing.event.ListSelectionEvent;
+// Removed: import javax.swing.event.ListSelectionListener; // Handled by lambda
 import javax.swing.table.DefaultTableModel;
+
+// Import required classes
+// import proyectopoo.Product;
+// import proyectopoo.ProductRepository;
+
 
 /**
  *
@@ -24,44 +31,39 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Pantalla4 extends javax.swing.JFrame {
 
+    private ProductRepository productRepository;
+    private List<Product> displayedProducts = new ArrayList<>();
+
     /**
      * Creates new form Pantalla4
      */
     public Pantalla4() {
         initComponents();
-        // Añadir ListSelectionListener para mostrar la imagen del producto seleccionado
-            taTablaPan5.getSelectionModel().addListSelectionListener(event -> {
-    if (!event.getValueIsAdjusting() && taTablaPan5.getSelectedRow() != -1) {
-        // Obtener el nombre del producto de la tabla
-        String nombreProducto = quitarAcentos(taTablaPan5.getValueAt(taTablaPan5.getSelectedRow(), 1).toString()).toLowerCase();
-        
-        // Formatear el nombre del producto para que coincida con el nombre del archivo (todo en minúsculas)
-        nombreProducto = nombreProducto.replace(" ", "_");
-        
-        // Extensiones posibles
-        String[] extensiones = {".png", ".jpg", ".jpeg"};
-        
-        boolean imagenCargada = false;
-        for (String extension : extensiones) {
-            String imagePath = "src/imagenes/" + nombreProducto + extension;
-            try {
-                BufferedImage img = ImageIO.read(new File(imagePath));
-                if (img != null) {
-                    ImageIcon icon = new ImageIcon(img.getScaledInstance(labelImagenProductoSeleccionado.getWidth(), labelImagenProductoSeleccionado.getHeight(), Image.SCALE_SMOOTH));
-                    labelImagenProductoSeleccionado.setIcon(icon);
-                    imagenCargada = true;
-                    break; // Imagen encontrada y cargada, salir del bucle (ramses)
-                }
-            } catch (IOException e) {
-                
-            }
-        }
-        if (!imagenCargada) {
-            labelImagenProductoSeleccionado.setIcon(null); // No se encontró ninguna imagen
-        }
-    }
-});
+        productRepository = new ProductRepository();
 
+        taTablaPan5.getSelectionModel().addListSelectionListener(event -> {
+            if (!event.getValueIsAdjusting()) {
+                int selectedRowIndex = taTablaPan5.getSelectedRow();
+                if (selectedRowIndex == -1 || selectedRowIndex >= displayedProducts.size()) {
+                    labelImagenProductoSeleccionado.setIcon(null);
+                    labelImagenProductoSeleccionado.setText(""); // Clear text if no selection
+                    return;
+                }
+
+                Product product = displayedProducts.get(selectedRowIndex);
+                String imagePath = product.getImagePath();
+                ImageIcon icon = ImageDownloader.loadImageIcon(imagePath, labelImagenProductoSeleccionado.getWidth(), labelImagenProductoSeleccionado.getHeight());
+                labelImagenProductoSeleccionado.setIcon(icon);
+
+                if (icon == null && imagePath != null && !imagePath.isEmpty()) {
+                    labelImagenProductoSeleccionado.setText("Preview N/A");
+                } else if (icon == null) {
+                    labelImagenProductoSeleccionado.setText(""); // No path, clear text
+                } else {
+                    labelImagenProductoSeleccionado.setText(""); // Image loaded, clear text
+                }
+            }
+        });
     }
 
     /**
@@ -286,73 +288,43 @@ public class Pantalla4 extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPedidoActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        // TODO add your handling code here:
-         String producto = quitarAcentos(txtProducto.getText().trim().toLowerCase());
-    String tamaño = quitarAcentos(txtTamaño.getText().trim().toLowerCase());
-    String piezas = quitarAcentos(txtPiezas.getText().trim().toLowerCase());
-    String costo = quitarAcentos(txtCosto.getText().trim().toLowerCase());
-
-    try (BufferedReader reader = new BufferedReader(new FileReader("src/textos/POO.txt"))) {
-        String line;
         DefaultTableModel model = (DefaultTableModel) taTablaPan5.getModel();
-        model.setRowCount(0); // Limpiar la tabla antes de la nueva búsqueda
+        model.setRowCount(0);
+        displayedProducts.clear();
 
-        while ((line = reader.readLine()) != null) {
-            String[] data = line.split(" ");
-            String prod = quitarAcentos(data[1].toLowerCase());
-            String tam = quitarAcentos(data[2].toLowerCase());
-            String piez = quitarAcentos(data[3].toLowerCase());
-            String cos = quitarAcentos(data[4].toLowerCase());
+        String productoSearchTerm = quitarAcentos(txtProducto.getText().trim().toLowerCase());
+        String tamañoSearchTerm = quitarAcentos(txtTamaño.getText().trim().toLowerCase());
+        String piezasSearchTerm = quitarAcentos(txtPiezas.getText().trim().toLowerCase());
+        String costoSearchTerm = quitarAcentos(txtCosto.getText().trim().toLowerCase());
+
+        List<Product> allProducts = productRepository.getAllProducts();
+
+        for (Product product : allProducts) {
+            String prodName = quitarAcentos(product.getName().toLowerCase());
+            String prodSize = quitarAcentos(product.getSize() != null ? product.getSize().toLowerCase() : "");
+            String prodPiecesStr = quitarAcentos(String.valueOf(product.getPieces()).toLowerCase());
+            String prodCostStr = quitarAcentos(String.valueOf(product.getCost()).toLowerCase());
 
             boolean match = true;
-            if (!producto.isEmpty() && !prod.contains(producto)) match = false;
-            if (!tamaño.isEmpty() && !tam.contains(tamaño)) match = false;
-            if (!piezas.isEmpty() && !piez.contains(piezas)) match = false;
-            if (!costo.isEmpty() && !cos.contains(costo)) match = false;
+            if (!productoSearchTerm.isEmpty() && !prodName.contains(productoSearchTerm)) match = false;
+            if (!tamañoSearchTerm.isEmpty() && !prodSize.contains(tamañoSearchTerm)) match = false;
+            if (!piezasSearchTerm.isEmpty() && !prodPiecesStr.contains(piezasSearchTerm)) match = false;
+            if (!costoSearchTerm.isEmpty() && !prodCostStr.contains(costoSearchTerm)) match = false;
 
             if (match) {
-                model.addRow(new Object[]{data[0], data[1], data[2], data[3], data[4]});
+                displayedProducts.add(product);
+                model.addRow(new Object[]{
+                    product.getId(),
+                    product.getName(),
+                    product.getSize(),
+                    product.getPieces(),
+                    product.getCost()
+                });
             }
         }
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Pantalla4.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Pantalla4.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Pantalla4.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Pantalla4.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Pantalla4().setVisible(true);
-            }
-        });
-    }
+    // Removed main() method
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;

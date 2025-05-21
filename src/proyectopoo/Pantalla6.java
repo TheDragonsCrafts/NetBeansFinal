@@ -4,14 +4,16 @@
  */
 package proyectopoo;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.StringTokenizer;
+// Removed: java.io.BufferedReader, BufferedWriter, File, FileReader, FileWriter, IOException, StringTokenizer
 import javax.swing.JOptionPane;
+import java.util.List; // Added
+
+// Add imports for project classes
+import proyectopoo.Order;
+import proyectopoo.OrderItem;
+import proyectopoo.OrderRepository;
+import proyectopoo.ProductRepository;
+
 
 /**
  *
@@ -19,11 +21,16 @@ import javax.swing.JOptionPane;
  */
 public class Pantalla6 extends javax.swing.JFrame {
 
+    private OrderRepository orderRepository;
+    private ProductRepository productRepository;
+
     /**
      * Creates new form Pantalla6
      */
     public Pantalla6() {
         initComponents();
+        productRepository = new ProductRepository();
+        orderRepository = new OrderRepository(productRepository);
     }
 
     /**
@@ -223,46 +230,21 @@ public class Pantalla6 extends javax.swing.JFrame {
     }//GEN-LAST:event_btnInicioActionPerformed
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
-        // TODO add your handling code here:
-         String cliente = txtCliente.getText().trim();
-    String productos = txtProductos.getText().trim();
-    String costos = txtCosto.getText().trim();
-    String total = txtTotal.getText().trim();
+        String clientName = txtCliente.getText().trim();
+        String totalText = txtTotal.getText().trim();
 
-    if (cliente.isEmpty() || productos.isEmpty() || costos.isEmpty() || total.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Por favor, completa todos los campos antes de registrar.");
-        return;
-    }
-
-    String[] productosArray = productos.split("\n");
-    String[] costosArray = costos.split("\n");
-
-    try {
-        File corteFile = new File("src/textos/" + cliente + "Corte.txt");
-        BufferedWriter escritor = new BufferedWriter(new FileWriter(corteFile));
-        
-        escritor.write("CLIENTE ARTÍCULOS COSTO PIEZAS TOTAL");
-        escritor.newLine();
-        
-        for (int i = 0; i < productosArray.length; i++) {
-            String producto = productosArray[i].replace(" ", "_");
-            String costo = costosArray[i];
-            escritor.write(cliente + " " + producto + " " + costo + " " + "Piezas " + costo);
-            escritor.newLine();
+        if (clientName.isEmpty() || totalText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please load client data first.", "Data Missing", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-        
-        escritor.close();
-        JOptionPane.showMessageDialog(this, "Tiquet registrado exitosamente.");
-    } catch (IOException ex) {
-        JOptionPane.showMessageDialog(this, "Error al registrar el tiquet.");
-        ex.printStackTrace();
-    }
 
-    // Limpiar campos de texto
-    txtCliente.setText("");
-    txtProductos.setText("");
-    txtCosto.setText("");
-    txtTotal.setText("");
+        JOptionPane.showMessageDialog(this, "Order data processed (Note: Corte file generation is now handled by reporting screens).");
+
+        // Limpiar campos de texto
+        txtCliente.setText("");
+        txtProductos.setText("");
+        txtCosto.setText("");
+        txtTotal.setText("");
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void txtClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtClienteActionPerformed
@@ -270,98 +252,54 @@ public class Pantalla6 extends javax.swing.JFrame {
     }//GEN-LAST:event_txtClienteActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        // TODO add your handling code here:
+        txtCliente.setText("");
+        txtProductos.setText("");
+        txtCosto.setText("");
+        txtTotal.setText("");
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnCargarDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarDatosActionPerformed
-        // TODO add your handling code here:
-         // Obtener el nombre del cliente
-    String cliente = txtCliente.getText().trim();
-    if (cliente.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Por favor, ingrese el nombre del cliente.");
-        return;
-    }
-
-    // Leer el archivo del cliente
-    File clienteFile = new File("src/textos/" + cliente + ".txt");
-    if (!clienteFile.exists()) {
-        JOptionPane.showMessageDialog(this, "No se encontró un archivo para el cliente especificado.");
-        return;
-    }
-
-    try (BufferedReader reader = new BufferedReader(new FileReader(clienteFile))) {
-        String line;
-        boolean isHeader = true;
-        StringBuilder productosBuilder = new StringBuilder();
-        StringBuilder costosBuilder = new StringBuilder();
-        double total = 0;
-
-        while ((line = reader.readLine()) != null) {
-            if (isHeader) {
-                isHeader = false;
-                continue;
-            }
-
-            StringTokenizer tokenizer = new StringTokenizer(line);
-            String id = tokenizer.nextToken();
-            String producto = tokenizer.nextToken().replace("_", " ");
-            String tamaño = tokenizer.nextToken();
-            int piezas = Integer.parseInt(tokenizer.nextToken());
-            double costo = Double.parseDouble(tokenizer.nextToken());
-
-            productosBuilder.append(producto).append("\n");
-            double totalProducto = piezas * costo;
-            costosBuilder.append(String.format("%.2f", totalProducto)).append("\n");
-            total += totalProducto;
+        String clientName = txtCliente.getText().trim();
+        if (clientName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingrese el nombre del cliente.", "Client Name Missing", JOptionPane.WARNING_MESSAGE);
+            return;
         }
 
-        txtProductos.setText(productosBuilder.toString());
-        txtCosto.setText(costosBuilder.toString());
-        txtTotal.setText(String.format("%.2f", total));
-    } catch (IOException ex) {
-        JOptionPane.showMessageDialog(this, "Error al leer el archivo del cliente.");
-        ex.printStackTrace();
-    }
+        // Clear previous data
+        txtProductos.setText("");
+        txtCosto.setText("");
+        txtTotal.setText("");
+
+        List<Order> orders = orderRepository.getOrdersByClient(clientName);
+
+        if (orders.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No orders found for this client.", "No Orders", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        StringBuilder productsBuilder = new StringBuilder();
+        StringBuilder costsBuilder = new StringBuilder();
+        double grandTotal = 0.0;
+
+        for (Order order : orders) {
+            for (OrderItem item : order.getItems()) {
+                productsBuilder.append(item.getProduct().getName())
+                               .append(" (x").append(item.getQuantity()).append(")\n");
+                costsBuilder.append(String.format("%.2f", item.getTotalPrice())).append("\n");
+                grandTotal += item.getTotalPrice();
+            }
+        }
+
+        txtProductos.setText(productsBuilder.toString());
+        txtCosto.setText(costsBuilder.toString());
+        txtTotal.setText(String.format("%.2f", grandTotal));
     }//GEN-LAST:event_btnCargarDatosActionPerformed
 
     private void txtTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTotalActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTotalActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Pantalla6.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Pantalla6.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Pantalla6.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Pantalla6.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Pantalla6().setVisible(true);
-            }
-        });
-    }
+    // Removed main() method
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;

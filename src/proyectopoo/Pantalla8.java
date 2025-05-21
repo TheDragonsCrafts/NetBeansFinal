@@ -4,11 +4,18 @@
  */
 package proyectopoo;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+// Removed: java.io.BufferedReader, File, FileReader, IOException
 import javax.swing.JOptionPane;
+import java.util.List; // Added
+import java.util.Set;   // Added
+import java.util.HashSet; // Added
+
+// Add imports for project classes
+import proyectopoo.Order;
+import proyectopoo.OrderItem;
+import proyectopoo.OrderRepository;
+import proyectopoo.ProductRepository;
+
 
 /**
  *
@@ -16,11 +23,16 @@ import javax.swing.JOptionPane;
  */
 public class Pantalla8 extends javax.swing.JFrame {
 
+    private OrderRepository orderRepository;
+    private ProductRepository productRepository;
+
     /**
      * Creates new form Pantalla8
      */
     public Pantalla8() {
         initComponents();
+        productRepository = new ProductRepository();
+        orderRepository = new OrderRepository(productRepository);
     }
 
     /**
@@ -163,86 +175,34 @@ public class Pantalla8 extends javax.swing.JFrame {
     }//GEN-LAST:event_btnInicioActionPerformed
 
     private void btnTotalCorteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTotalCorteActionPerformed
-        // TODO add your handling code here:
-         File folder = new File("src/textos/");
-    File[] listOfFiles = folder.listFiles((dir, name) -> name.endsWith("Corte.txt"));
-    
-    StringBuilder clientes = new StringBuilder();
-    int totalArticulos = 0;
-    double totalVentas = 0.0;
+        List<Order> allOrders = orderRepository.getAllOrders();
 
-    if (listOfFiles != null) {
-        for (File file : listOfFiles) {
-            System.out.println("Cargando datos del archivo: " + file.getName());
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                String line;
-                String cliente = file.getName().replace("Corte.txt", "");
-                clientes.append(cliente).append("\n");
+        if (allOrders.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No orders found to calculate totals.");
+            txtClientes.setText("");
+            txtArticulos.setText("");
+            txtVentas.setText("");
+            return;
+        }
 
-                // Leer y descartar la primera línea de encabezado
-                reader.readLine();
-                
-                while ((line = reader.readLine()) != null) {
-                    String[] datos = line.split(" ");
-                    if (datos.length == 5) {
-                        try {
-                            double costo = Double.parseDouble(datos[2]);
-                            totalArticulos++;
-                            totalVentas += costo;
-                        } catch (NumberFormatException e) {
-                            System.out.println("Error al parsear los datos: " + line);
-                        }
-                    } else {
-                        System.out.println("Línea inválida: " + line);
-                    }
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error al leer los archivos de corte.");
+        Set<String> uniqueClients = new HashSet<>();
+        int totalArticlesSold = 0;
+        double totalSalesAmount = 0.0;
+
+        for (Order order : allOrders) {
+            uniqueClients.add(order.getClientName());
+            totalSalesAmount += order.getTotalAmount();
+            for (OrderItem item : order.getItems()) {
+                totalArticlesSold += item.getQuantity();
             }
         }
-        txtClientes.setText(clientes.toString());
-        txtArticulos.setText(String.valueOf(totalArticulos));
-        txtVentas.setText(String.valueOf(totalVentas));
-    } else {
-        JOptionPane.showMessageDialog(this, "No se encontraron archivos de corte.");
-    }
+
+        txtClientes.setText(String.valueOf(uniqueClients.size())); // Display count of unique clients
+        txtArticulos.setText(String.valueOf(totalArticlesSold));
+        txtVentas.setText(String.format("%.2f", totalSalesAmount));
     }//GEN-LAST:event_btnTotalCorteActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Pantalla8.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Pantalla8.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Pantalla8.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Pantalla8.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Pantalla8().setVisible(true);
-            }
-        });
-    }
+    // Removed main() method
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnInicio;
