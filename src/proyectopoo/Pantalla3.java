@@ -4,13 +4,14 @@
  */
 package proyectopoo;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane; // Added for JOptionPane
+import java.util.List; // Added for List<Product>
+// Removed: java.io.BufferedReader, BufferedWriter, File, FileReader, FileWriter, IOException
+
+// Add imports for Product and ProductRepository if not automatically handled.
+// import proyectopoo.Product;
+// import proyectopoo.ProductRepository;
 
 /**
  *
@@ -18,14 +19,16 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Pantalla3 extends javax.swing.JFrame {
     DefaultTableModel TP = new DefaultTableModel();
+    private ProductRepository repository; // Added repository member
 
     /**
      * Creates new form Pantalla3
      */
     public Pantalla3() {
         initComponents();
+        repository = new ProductRepository(); // Initialize repository
         TP.addColumn("ID");
-        TP.addColumn(" Productos");
+        TP.addColumn("Productos"); // Corrected " Productos" to "Productos" for consistency
         TP.addColumn("Tamaño");
         TP.addColumn("Piezas");
         TP.addColumn("Costo");
@@ -166,62 +169,50 @@ public class Pantalla3 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        String archivo = "src/textos/POO.txt";
-        File file = new File(archivo);
-        try{
-           BufferedReader lector = new BufferedReader(new FileReader(file));
-           Object[] linea = lector.lines().toArray();
-           for(int i=0;i<linea.length;i++){
-               String dato = linea[i].toString();
-               String texto[] = dato.split(" ");
-               TP.addRow(texto);
-           }
-            
-        }catch(IOException e){
-            
-         }
-        
+        TP.setRowCount(0); // Clear the table
+        List<Product> products = repository.getAllProducts();
+        for (Product product : products) {
+            TP.addRow(new Object[]{
+                product.getId(),
+                product.getName(), // Name with spaces, as expected by table
+                product.getSize(),
+                product.getPieces(),
+                product.getCost()
+            });
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void btnLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLActionPerformed
-
          DefaultTableModel model = (DefaultTableModel) TablaProductos.getModel();
         model.setRowCount(0);
     }//GEN-LAST:event_btnLActionPerformed
 
     private void btnBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBActionPerformed
-        // TODO add your handling code here:
-        
-        int seleccion=TablaProductos.getSelectedRow();
-        if (seleccion>0){
+        int seleccion = TablaProductos.getSelectedRow();
+
+        if (seleccion < 0) {
+            JOptionPane.showMessageDialog(this, "Please select a product to delete.", "No Product Selected", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int productId = (int) TP.getValueAt(seleccion, 0); // Column 0 is ID
+
+        int confirmation = JOptionPane.showConfirmDialog(this,
+                "Are you sure you want to delete product ID: " + productId + "?",
+                "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+
+        if (confirmation != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        boolean success = repository.deleteProduct(productId);
+
+        if (success) {
             TP.removeRow(seleccion);
-            try{
-                BufferedWriter escribir=new BufferedWriter (new FileWriter ("src/textos/POO.txt"));
-                for(int i=0;i<TP.getRowCount();i++){
-                    String ID=TP.getValueAt(i, 0).toString();
-                    String Producto=TP.getValueAt(i, 1).toString();
-                    String Tamaño=TP.getValueAt(i, 2).toString();
-                    String Piezas=TP.getValueAt(i, 3).toString();
-                    String Costo=TP.getValueAt(i, 4).toString();
-                    escribir.write(ID+" "+Producto+" "+Tamaño+" "+Piezas+" "+Costo);
-                    escribir.newLine();
-                }
-                
-                escribir.close();
-                
-             }catch(IOException ex){
+            JOptionPane.showMessageDialog(this, "Product deleted successfully.");
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to delete product from data file.", "Deletion Error", JOptionPane.ERROR_MESSAGE);
         }
-        
-        
-        
-            
-        
-            
-        }
-        
-        
-        
     }//GEN-LAST:event_btnBActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -231,31 +222,8 @@ public class Pantalla3 extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
      
-    /**
-     * @param args the command line arguments
-     */
-     private void cargarDatos() {
-    String archivo = "C:\\Users\\301-PC2\\Desktop\\alumnos.txt";
-    File file = new File(archivo);
-    try {
-        BufferedReader lector = new BufferedReader(new FileReader(file));
-        Object[] linea = lector.lines().toArray();
-        DefaultTableModel modelo = (DefaultTableModel) TablaProductos.getModel();
-        modelo.setRowCount(0); // Limpiar tabla antes de cargar datos
-        for (int i = 0; i < linea.length; i++) {
-            String dato = linea[i].toString();
-            String texto[] = dato.split(" ");
-            modelo.addRow(texto);
-        }
-    } catch (IOException e) {
-        
-    }
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Pantalla3().setVisible(true);
-            }
-        });
-    }
+    // Removed cargarDatos() method
+    // Removed main() method
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable TablaProductos;
