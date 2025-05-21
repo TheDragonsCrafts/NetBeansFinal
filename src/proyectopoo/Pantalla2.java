@@ -4,19 +4,17 @@
  */
 package proyectopoo;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URL;
-import java.util.StringTokenizer;
-import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
+import javax.swing.ImageIcon;
+import java.io.File; // Keep this if directly using File for image path, though ImageIcon can take string.
+// Remove other unused imports like java.awt.*, java.io.* for file ops, java.net.URL, javax.imageio.ImageIO, StringTokenizer
+// Add imports for Product, ProductRepository, ImageDownloader if not automatically handled by IDE/compiler.
+// For this tool, explicit imports are better if known.
+// import proyectopoo.Product;
+// import proyectopoo.ProductRepository;
+// import proyectopoo.ImageDownloader;
+
+
 /**
  *
  * @author LAB 314 PC xx
@@ -240,79 +238,91 @@ public class Pantalla2 extends javax.swing.JFrame {
     }//GEN-LAST:event_btnInicioActionPerformed
 
     private void btnRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroActionPerformed
-          // TODO add your handling code here:
-    String Producto, Tamaño, Piezas, Costo, URL;
-    Producto = txtProducto.getText();
-    Piezas = txtPiezas.getText();
-    Tamaño = txtTamaño.getText();
-    Costo = txtCosto.getText();
-    URL = txtURL.getText();
+        ProductRepository repository = new ProductRepository();
 
-    try {
-        // Determinar el próximo ID
-        int nextID = getNextID("src/textos/POO.txt");
+        String productNameString = txtProducto.getText();
+        String sizeString = txtTamaño.getText();
+        String piecesString = txtPiezas.getText();
+        String costString = txtCosto.getText();
+        String urlString = txtURL.getText();
 
-        // Registrar datos en el archivo POO.txt
-        BufferedWriter escritor = new BufferedWriter(new FileWriter("src/textos/POO.txt", true));
-        escritor.write(String.format("%03d %s %s %s %s", nextID, Producto.replace(" ", "_"), Tamaño, Piezas, Costo));
-        escritor.newLine();
-        escritor.close();
+        // Input Validation
+        if (productNameString.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Product name cannot be empty.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        // Descargar y redimensionar la imagen
-        BufferedImage originalImage = ImageIO.read(new URL(URL));
-        Image resizedImage = originalImage.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-        BufferedImage bufferedResizedImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = bufferedResizedImage.createGraphics();
-        g2d.drawImage(resizedImage, 0, 0, null);
-        g2d.dispose();
-        String imageName = Producto.replace(" ", "_") + ".png";
-        File outputfile = new File("src/imagenes/" + imageName);
-        ImageIO.write(bufferedResizedImage, "png", outputfile);
+        // Size can be empty, no specific validation here.
 
-        
+        int piecesInt;
+        try {
+            piecesInt = Integer.parseInt(piecesString);
+            if (piecesInt < 0) {
+                JOptionPane.showMessageDialog(this, "Pieces must be a non-negative integer.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid input for Pieces. Must be a non-negative number.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        // Limpiar los campos de texto
+        double costDouble;
+        try {
+            costDouble = Double.parseDouble(costString);
+            if (costDouble < 0.0) {
+                JOptionPane.showMessageDialog(this, "Cost must be a non-negative number.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid input for Cost. Must be a non-negative number.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (urlString.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "URL cannot be empty.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Image Downloading
+        String savedImagePath = ImageDownloader.downloadAndSaveImage(urlString, productNameString);
+        if (savedImagePath == null) {
+            JOptionPane.showMessageDialog(this, "Failed to download or save image.", "Image Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Product Creation & Saving
+        int nextID = repository.getNextID();
+        Product newProduct = new Product(nextID, productNameString, sizeString, piecesInt, costDouble, savedImagePath);
+
+        if (!repository.addProduct(newProduct)) {
+            JOptionPane.showMessageDialog(this, "Failed to save product data.", "Storage Error", JOptionPane.ERROR_MESSAGE);
+            // Optionally, attempt to delete the downloaded image if product saving fails
+            // File downloadedImage = new File(savedImagePath);
+            // if (downloadedImage.exists()) {
+            //     downloadedImage.delete();
+            // }
+            return;
+        }
+
+        // Success Feedback & UI Update
+        JOptionPane.showMessageDialog(this, "Registro exitoso y imagen guardada.");
+
         txtProducto.setText("");
         txtPiezas.setText("");
         txtTamaño.setText("");
         txtCosto.setText("");
         txtURL.setText("");
 
-        JOptionPane.showMessageDialog(this, "Registro exitoso y imagen guardada.");
-    } catch (IOException ex) {
-        JOptionPane.showMessageDialog(this, "Error al registrar los datos o descargar la imagen.");
-        ex.printStackTrace();
-    }
-    
-    
-    }//GEN-LAST:event_btnRegistroActionPerformed
-// Método para obtener el próximo ID disponible
-private int getNextID(String filePath) {
-    int maxID = 0;
-    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-        String line;
-        
-        // Saltar la primera línea para no dar exepcion con el String del ID 
-        reader.readLine();
-        
-        while ((line = reader.readLine()) != null) {
-            StringTokenizer tokenizer = new StringTokenizer(line);
-            int currentID = Integer.parseInt(tokenizer.nextToken());
-            if (currentID > maxID) {
-                maxID = currentID;
-            }
+        try {
+            labelImagenProducto.setText(""); // Clear placeholder text
+            labelImagenProducto.setIcon(new ImageIcon(savedImagePath));
+        } catch (Exception e) {
+            // Log or show a less critical error if image display fails after successful save
+            System.err.println("Error displaying image: " + e.getMessage());
+            labelImagenProducto.setText("Image saved, but display error.");
+            labelImagenProducto.setIcon(null); // Clear icon if loading failed
         }
-    } catch (IOException | NumberFormatException ex) {
-        ex.printStackTrace();
-    }
-    return maxID + 1;
-}
-
-    
-    
-    
-    
-    
+    }//GEN-LAST:event_btnRegistroActionPerformed
     
     /**
      * @param args the command line arguments
